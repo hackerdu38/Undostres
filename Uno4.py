@@ -9,7 +9,7 @@ def melange(paquet):
 
 
 def init():
-    global paquet, mains, ordre_passage, nb_joueurs, nb_cartes
+    global paquet, mains, ordre_passage, nb_joueurs, nb_cartes,dico
     nb_joueurs= int(input("Combien de joueurs ? "))
     nb_cartes=int(input("Combien de cartes par main ? "))
     mains={}
@@ -22,6 +22,19 @@ def init():
             main_jou.append(carte)
         mains[a]= main_jou
         ordre_passage[i]=a
+
+    dico={}
+    dico[0]="nul"
+    for i in range (1,26):
+        dico[i]="rouge"
+    for i in range(26,51):
+        dico[i]="bleu"
+    for i in range(51,76):
+        dico[i]="jaune"
+    for i in range (76,101):
+        dico[i]="vert"
+    for i in range (101,109):
+        dico[i]=None
 
 def sens_jeu(main_joueur, tas_jeu, nb_joueurs, actif):
     #enlever main_joueur à la fin ?
@@ -42,6 +55,9 @@ def couleur(indice):
     """
     Permet d'obtenir la couleur d'une carte donnee par son indice.
     """
+    return dico[indice]
+
+    """
     if 1<= indice <= 25:
         return "rouge"
     elif 26 <= indice <= 50:
@@ -52,6 +68,7 @@ def couleur(indice):
         return "vert"
     elif 101 <= indice <= 108:
         return None
+    """
 
 def num_carte(indice):
     """
@@ -108,7 +125,7 @@ def pioche (paquet):
     """
     Permet de piocher une carte dans la pioche
     """
-    carte_pioche=paquet.pop(randint(0,len(paquet)))
+    carte_pioche=paquet.pop(randint(0,len(paquet)-1))
     return carte_pioche
 
 
@@ -154,7 +171,7 @@ def plus4(tas_jeu):
 
 
 def joue_ou_pioche(main_joueur, tas_jeu):
-    global paquet
+    global paquet, couleur4, actif, compteurplus4
     """
     Fait piocher le joueur en cas de besoin
     """
@@ -181,6 +198,9 @@ def joue_ou_pioche(main_joueur, tas_jeu):
             compteur_pioche=plus4(tas_jeu)
             piocher(paquet, main_joueur, compteur_pioche)
             peut_jouer=False
+            print("Quelle couleur souhaitez-vous ", ordre_passage[(actif-1)%nb_joueurs], " ? ")
+            couleur4=input("")
+            dico[tas_jeu[-1]]=couleur4
 
     else :
         k=0
@@ -276,15 +296,15 @@ if __name__=="__main__":
         affiche=[texte(i) for i in mains[ordre_passage[actif]]]
         print("Carte dessus paquet : ",texte(tas_jeu[-1]))
         test2=joue_ou_pioche(mains[ordre_passage[actif]], tas_jeu)
-        print("test",test2)
-        print("Au tour du joueur", ordre_passage[actif], affiche)
 
         if test2:
+            print("Au tour du joueur", ordre_passage[actif], affiche)
             carte=int(input("Entrez l'indice de la carte que vous souhaitez jouer"))
             a=mains[ordre_passage[actif]]
             carte=a[carte]
             actif=Tour_jeux(actif, mains[ordre_passage[actif]], tas_jeu, nb_joueurs,carte)
         else :
-            print("Tas jeu : ", texte(tas_jeu[-1]))
+            #print("Au tour du joueur", ordre_passage[actif], affiche)
+            #print("Tas jeu : ", texte(tas_jeu[-1]))
             actif2=sens_jeu(mains[ordre_passage[actif]], tas_jeu, nb_joueurs, actif)
             actif=actif2
