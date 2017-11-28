@@ -143,13 +143,13 @@ def regles_jeu(carte, tas_jeu):
 def plus4(tas_jeu):
     i=-1
     compteurpioche=0
-    nom=texte(tas_jeu[i])
     while nom[0:2] == "+2" or nom=="+4" and tas_jeu[-1]!=tas_jeu[0]:
         if nom[0:2]=="+2":
             compteurpioche=compteurpioche+2
         else:
             compteurpioche=compteurpioche+4
         i-=1
+        nom=texte(tas_jeu[i])
     return compteurpioche
 
 
