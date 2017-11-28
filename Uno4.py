@@ -32,9 +32,10 @@ def sens_jeu(main_joueur, tas_jeu, nb_joueurs, actif):
     """
     sens =1
     numero_jou=1
-    if texte(tas_jeu[-1])=="changement sens":
+    text3=texte(tas_jeu[-1])
+    if text3[0:15]=="changement sens":
        sens=-sens
-    elif texte(tas_jeu[-1])=="passe tour":
+    elif text3[0:10]=="passe tour":
         numero_jou=2
     actif = (actif+sens*numero_jou)%nb_joueurs-1
     return actif+1
@@ -164,7 +165,8 @@ def joue_ou_pioche(main_joueur, tas_jeu):
     if text[0:2]=="+2":
         compteur_2=False
         for i in main_joueur:
-            if texte(i)=="+2" or texte(i)=="+4":
+            text2=texte(i)
+            if text2[0:2]=="+2" or texte(i)=="+4":
                 compteur_2=True
         if compteur_2==False:
             compteur_pioche=plus4(tas_jeu)
