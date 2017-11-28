@@ -1,6 +1,4 @@
 
-
-
 from random import *
 
 def melange(paquet):
@@ -144,6 +142,7 @@ def regles_jeu(carte, tas_jeu):
 def plus4(tas_jeu):
     i=-1
     compteurpioche=0
+    nom=texte(tas_jeu[i])
     while nom[0:2] == "+2" or nom=="+4" and tas_jeu[-1]!=tas_jeu[0]:
         if nom[0:2]=="+2":
             compteurpioche=compteurpioche+2
@@ -202,6 +201,7 @@ def joue_ou_pioche(main_joueur, tas_jeu):
                     peut_jouer=True
                 else :
                     peut_jouer=False
+                    print("False")
             else :
                 print("Vous êtes obligés de piocher")
                 piocher(paquet, main_joueur, 1)
@@ -253,13 +253,11 @@ def Tour_jeux(actif, main_joueur, tas_jeu, nb_joueurs,carte):
     if test != False :
         carte2=main_joueur.pop(main_joueur.index(test))
         tas_jeu.append(carte2)
-    #print(mains[ordre_passage[actif]])
     vict=test_victoire(main_joueur)
     if vict:
         return None
     else :
         actif=sens_jeu(main_joueur, tas_jeu, nb_joueurs, actif)
-        #joue_ou_pioche(main_joueur, tas_jeu)
         return actif
 
 
@@ -278,6 +276,7 @@ if __name__=="__main__":
         affiche=[texte(i) for i in mains[ordre_passage[actif]]]
         print("Carte dessus paquet : ",texte(tas_jeu[-1]))
         test2=joue_ou_pioche(mains[ordre_passage[actif]], tas_jeu)
+        print("test",test2)
         print("Au tour du joueur", ordre_passage[actif], affiche)
 
         if test2:
@@ -288,4 +287,4 @@ if __name__=="__main__":
         else :
             print("Tas jeu : ", texte(tas_jeu[-1]))
             actif2=sens_jeu(mains[ordre_passage[actif]], tas_jeu, nb_joueurs, actif)
-            actif2=actif
+            actif=actif2
