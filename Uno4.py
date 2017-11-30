@@ -9,7 +9,7 @@ def melange(paquet):
 
 
 def init():
-    global paquet, mains, ordre_passage, nb_joueurs, nb_cartes,dico
+    global paquet, mains, ordre_passage, nb_joueurs, nb_cartes,dico,sens
     nb_joueurs= int(input("Combien de joueurs ? "))
     nb_cartes=int(input("Combien de cartes par main ? "))
     mains={}
@@ -36,12 +36,13 @@ def init():
     for i in range (101,109):
         dico[i]=None
 
+    sens =1
+
 def sens_jeu(main_joueur, tas_jeu, nb_joueurs, actif):
-    #enlever main_joueur à la fin ?
+    global sens
     """
     Renvoie le numéro du joueur suivant
     """
-    sens =1
     numero_jou=1
     text3=texte(tas_jeu[-1])
     if text3[0:15]=="changement sens":
@@ -56,19 +57,6 @@ def couleur(indice):
     Permet d'obtenir la couleur d'une carte donnee par son indice.
     """
     return dico[indice]
-
-    """
-    if 1<= indice <= 25:
-        return "rouge"
-    elif 26 <= indice <= 50:
-        return "bleu"
-    elif 51 <= indice <= 75:
-        return "jaune"
-    elif 76 <= indice <= 100:
-        return "vert"
-    elif 101 <= indice <= 108:
-        return None
-    """
 
 def num_carte(indice):
     """
@@ -171,7 +159,7 @@ def plus4(tas_jeu):
 
 
 def joue_ou_pioche(main_joueur, tas_jeu):
-    global paquet, couleur4, actif, compteurplus4
+    global paquet, couleur4, actif, compteurplus4,sens
     """
     Fait piocher le joueur en cas de besoin
     """
@@ -198,7 +186,11 @@ def joue_ou_pioche(main_joueur, tas_jeu):
             compteur_pioche=plus4(tas_jeu)
             piocher(paquet, main_joueur, compteur_pioche)
             peut_jouer=False
-            print("Quelle couleur souhaitez-vous ", ordre_passage[(actif-1)%nb_joueurs], " ? ")
+            if sens == 1:
+                prenom=ordre_passage[(actif-1)%nb_joueurs]
+            if sens == -1:
+                prenom=ordre_passage[(actif+1)%nb_joueurs]
+            print("Quelle couleur souhaitez-vous ", prenom, " ? ")
             couleur4=input("")
             dico[tas_jeu[-1]]=couleur4
 
