@@ -1,6 +1,25 @@
 
 from random import *
+import tkinter as Tk
+from PIL import Image, ImageTk
 
+
+def start():
+    global fenprinc
+    fenprinc=Tk.Tk()
+    fenprinc.geometry("1350x766")
+    fenprinc.title("Undostres")
+    
+    image = Image.open("uno.png") 
+    photo = ImageTk.PhotoImage(image)  
+    canvas = Tk.Canvas(fenprinc, width = image.size[0], height = image.size[1])  
+    canvas.create_image(0,0, anchor = Tk.NW, image=photo) 
+    canvas.pack()
+    Text= Tk.Button(fenprinc, text="Commencer la partie", bg="white",relief="raised", font=("Times", "20", "bold"),cursor="heart",command=fenetre)
+    Text.pack()
+    Text_fenprinc= canvas.create_window(1100, 130, window=Text)
+    fenprinc.mainloop()
+    
 def melange(paquet):
     """
     Permet de melanger le paquet de cartes
@@ -10,8 +29,8 @@ def melange(paquet):
 
 def init():
     global paquet, mains, ordre_passage, nb_joueurs, nb_cartes,dico,sens
-    nb_joueurs= input("Combien de joueurs ? "))
-    nb_cartes=int(input("Combien de cartes par main ? "))
+    #nb_joueurs=int(input("Combien de joueurs ? "))
+    #nb_cartes=int(input("Combien de cartes par main ? "))
     mains={}
     ordre_passage={}
     for i in range (0,nb_joueurs):
@@ -275,11 +294,38 @@ def Tour_jeux(actif, main_joueur, tas_jeu, nb_joueurs,carte):
         actif=sens_jeu(main_joueur, tas_jeu, nb_joueurs, actif)
         return actif
 
+def okE(key):
+    global joueurs
+    touche=key.keysym
+    if touche=="Return":
+        joueurs=entree.get()
+
+def fenetre():
+    global entree, nb_cartes,nb_joueurs
+    
+    fenjeu=Tk.Toplevel()
+    texte_nb_joueurs=Tk.Label(fenjeu,text="Combien de joueurs ? ")
+    texte_nb_joueurs.pack()
+   
+    entree=Tk.Entry(fenjeu)
+    entree.pack()
+    texte_nb_cartes=Tk.Label(fenjeu,text="Combien de cartes par main ? ")
+    texte_nb_cartes.pack()
+    entree2=Tk.Entry(fenjeu)
+    entree2.pack()
+    
+    #texte_nb_joueurs.focus_set()
+    fenjeu.bind("<Return>",okE)
+
+    print(nb_cartes,nb_joueurs)
 
 
-
-if __name__=="__main__":
-
+def programme_principal():
+    
+    
+    
+    
+    
     paquet =[i for i in range (1,109)]
     init()
     melange(paquet)
@@ -299,7 +345,7 @@ if __name__=="__main__":
             carte=a[carte]
             actif=Tour_jeux(actif, mains[ordre_passage[actif]], tas_jeu, nb_joueurs,carte)
         else :
-            #print("Au tour du joueur", ordre_passage[actif], affiche)
-            #print("Tas jeu : ", texte(tas_jeu[-1]))
             actif2=sens_jeu(mains[ordre_passage[actif]], tas_jeu, nb_joueurs, actif)
             actif=actif2
+
+start()
