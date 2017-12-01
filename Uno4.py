@@ -10,7 +10,7 @@ def melange(paquet):
 
 def init():
     global paquet, mains, ordre_passage, nb_joueurs, nb_cartes,dico,sens
-    nb_joueurs= int(input("Combien de joueurs ? "))
+    nb_joueurs= input("Combien de joueurs ? "))
     nb_cartes=int(input("Combien de cartes par main ? "))
     mains={}
     ordre_passage={}
@@ -159,7 +159,7 @@ def plus4(tas_jeu):
 
 
 def joue_ou_pioche(main_joueur, tas_jeu):
-    global paquet, couleur4, actif, compteurplus4,sens
+    global paquet, couleur4, actif, compteurplus4,sens, verifprint
     """
     Fait piocher le joueur en cas de besoin
     """
@@ -241,7 +241,10 @@ def carte_a_jouer(main_joueur, tas_jeu, carte):
         while ok2==False:
             print(ok2, carte)
             carte=int(input("Choisissez une autre carte : "))
+            a=mains[ordre_passage[actif]]
+            carte=a[carte]
             ok2=regles_jeu(carte, tas_jeu)
+            print(ok2)
         return carte
     else :
         return False
