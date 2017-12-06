@@ -1,23 +1,24 @@
 
 from random import *
-import tkinter as Tk
+from tkinter import *
 from PIL import Image, ImageTk
 
 
 def start():
     global fenprinc
-    fenprinc=Tk.Tk()
+    fenprinc=Tk()
     fenprinc.geometry("1350x766")
     fenprinc.title("Undostres")
     
-    image = Image.open("uno.png") 
+    image = Image.open("uno.jpg") 
     photo = ImageTk.PhotoImage(image)  
-    canvas = Tk.Canvas(fenprinc, width = image.size[0], height = image.size[1])  
-    canvas.create_image(0,0, anchor = Tk.NW, image=photo) 
+    canvas = Canvas(fenprinc, width = image.size[0], height = image.size[1])  
+    canvas.create_image(0,0, anchor = NW, image=photo) 
     canvas.pack()
-    Text= Tk.Button(fenprinc, text="Commencer la partie", bg="white",relief="raised", font=("Times", "20", "bold"),cursor="heart",command=fenetre)
+    Text= Button(fenprinc, text="Commencer la partie", bg="white",relief="raised", font=("Times", "20", "bold"),cursor="heart",command=fenetre_data)
     Text.pack()
     Text_fenprinc= canvas.create_window(1100, 130, window=Text)
+    
     fenprinc.mainloop()
     
 def melange(paquet):
@@ -29,18 +30,15 @@ def melange(paquet):
 
 def init():
     global paquet, mains, ordre_passage, nb_joueurs, nb_cartes,dico,sens
-    #nb_joueurs=int(input("Combien de joueurs ? "))
-    #nb_cartes=int(input("Combien de cartes par main ? "))
-    mains={}
-    ordre_passage={}
-    for i in range (0,nb_joueurs):
-        a=str(input("Entrez le nom du joueur "))
-        main_jou=[]
-        for j in range(0,nb_cartes):
-            carte=paquet.pop(randint(1,len(paquet)-1))
-            main_jou.append(carte)
-        mains[a]= main_jou
-        ordre_passage[i]=a
+    
+    main_jou=[]
+    for j in range(0,nb_cartes):
+        carte=paquet.pop(randint(1,len(paquet)-1))
+        main_jou.append(carte)
+    mains[nomjou]= main_jou
+    ordre_passage[salade]=nomjou
+
+def init2():
 
     dico={}
     dico[0]="nul"
@@ -300,32 +298,63 @@ def okE(key):
     if touche=="Return":
         joueurs=entree.get()
 
-def fenetre():
-    global entree, nb_cartes,nb_joueurs
+def fenetre_data():
+    global entree, nb_cartes,nb_joueurs,fenjeu,entree, entree2
     
-    fenjeu=Tk.Toplevel()
-    texte_nb_joueurs=Tk.Label(fenjeu,text="Combien de joueurs ? ")
+    fenjeu=Tk()
+    texte_nb_joueurs=Label(fenjeu,text="Combien de joueurs ? ")
     texte_nb_joueurs.pack()
    
-    entree=Tk.Entry(fenjeu)
+    entree=Entry(fenjeu)
     entree.pack()
-    texte_nb_cartes=Tk.Label(fenjeu,text="Combien de cartes par main ? ")
+    texte_nb_cartes=Label(fenjeu,text="Combien de cartes par main ? ")
     texte_nb_cartes.pack()
-    entree2=Tk.Entry(fenjeu)
+    entree2=Entry(fenjeu)
     entree2.pack()
+    valider=Button(fenjeu, text="Valider", command=programme1)
+    valider.pack()
     
-    #texte_nb_joueurs.focus_set()
+    entree.focus_set()
     fenjeu.bind("<Return>",okE)
 
     print(nb_cartes,nb_joueurs)
 
+def fenetre_nom():
+    global dico_noms,fennom
+    
+    fennom=Tk()
+    ordre=Label(text="Entrez le nom des joueurs")
+    ordre.pack()
+    valider2=Button(fennom, text="Valider", command=programme_principal)
+    valider2.pack()
+    dico_noms={}
+    for i in range (nb_joueurs):
+        dico_noms[i]="nom"+str(i)
+    for i in range (nb_joueurs):
+        dico_noms[i]=Entry(fennom)
+        dico_noms[i].pack()
+
+def programme1():
+    global nb_joueurs, nb_cartes
+    
+    nb_joueurs=int(entree.get())
+    nb_cartes=int(entree2.get())
+    fenjeu.destroy()
+    fenprinc.destroy()
+    fenetre_nom()
 
 def programme_principal():
-    
-    
-    
-    
-    
+    global nb_joueurs, nb_cartes, paquet, tas_jeu, actif, mains, ordre_passage,nomjou,salade
+
+    mains={}
+    ordre_passage={}
+
+    for salade in range(nb_joueurs):
+        nomjou=dico_noms[salade].get()
+        init()
+    fennom.destroy()
+    init2()
+    print(ordre_passage)
     paquet =[i for i in range (1,109)]
     init()
     melange(paquet)
