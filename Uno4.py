@@ -29,7 +29,7 @@ def melange(paquet):
 
 
 def init():
-    global paquet, mains, ordre_passage, nb_joueurs, nb_cartes,dico,sens
+    global mains, ordre_passage, nb_joueurs, nb_cartes
     
     main_jou=[]
     for j in range(0,nb_cartes):
@@ -39,7 +39,8 @@ def init():
     ordre_passage[salade]=nomjou
 
 def init2():
-
+    global sens,dico
+    
     dico={}
     dico[0]="nul"
     for i in range (1,26):
@@ -62,7 +63,7 @@ def sens_jeu(main_joueur, tas_jeu, nb_joueurs, actif):
     """
     numero_jou=1
     text3=texte(tas_jeu[-1])
-    if text3[0:15]=="changement sens":
+    if text3[0:15]=="changement_sens":
        sens=-sens
     elif text3[0:10]=="passe tour":
         numero_jou=2
@@ -112,7 +113,7 @@ def texte(indice):
     if numero == 10 :
         numero="+2"
     elif numero == 11:
-        numero = "changement sens"
+        numero = "changement_sens"
     elif numero==12:
         numero = "passe tour"
     elif 100<indice<105:
@@ -165,13 +166,17 @@ def plus4(tas_jeu):
     i=-1
     compteurpioche=0
     nom=texte(tas_jeu[i])
-    while nom[0:2] == "+2" or nom=="+4" and tas_jeu[-1]!=tas_jeu[0]:
+    while nom[0:2] == "+2" or nom=="+4":
         if nom[0:2]=="+2":
             compteurpioche=compteurpioche+2
         else:
             compteurpioche=compteurpioche+4
-        i-=1
-        nom=texte(tas_jeu[i])
+        
+        if tas_jeu[i]!=tas_jeu[0]:
+            i-=1
+            nom=texte(tas_jeu[i])
+        else:
+            break
     return compteurpioche
 
 
@@ -343,18 +348,37 @@ def programme1():
     fenprinc.destroy()
     fenetre_nom()
 
+def ff(bt):
+    global carte
+    carte=bt.cget("text")
+
+    
+#def carte_sur_jeu():
+    
+    
+    
+
 def programme_principal():
-    global nb_joueurs, nb_cartes, paquet, tas_jeu, actif, mains, ordre_passage,nomjou,salade
+    global nb_joueurs, nb_cartes, paquet, tas_jeu, actif, mains, ordre_passage,nomjou,salade, actif
+    dictionnaire_trad={"bleu":"cyan","rouge":"red","vert":"green","jaune":"yellow"}
 
     mains={}
     ordre_passage={}
+    totalite_cartes={}
+    for i in range (108):
+        totalite_cartes[i]=str(texte(i))
+    clefs_cartes=list(totalite_cartes.keys())
 
     for salade in range(nb_joueurs):
         nomjou=dico_noms[salade].get()
         init()
+    
+    
     fennom.destroy()
     init2()
-    print(ordre_passage)
+    print(texte(tas_jeu[-1]))
+    fencarte=Tk()
+    
     paquet =[i for i in range (1,109)]
     init()
     melange(paquet)
@@ -364,17 +388,37 @@ def programme_principal():
 
     while actif != None:
         affiche=[texte(i) for i in mains[ordre_passage[actif]]]
+        if couleur(tas_jeu[-1])==None:
+            Carte_tas_jeu=Button(fencarte, text=str(texte(tas_jeu[-1])))
+        else:
+            Carte_tas_jeu=Button(fencarte, bg=str(dictionnaire_trad[str(couleur(tas_jeu[-1]))]), text=str(texte(tas_jeu[-1])))
+        Carte_tas_jeu.grid(column=1, row=1)
         print("Carte dessus paquet : ",texte(tas_jeu[-1]))
         test2=joue_ou_pioche(mains[ordre_passage[actif]], tas_jeu)
 
         if test2:
             print("Au tour du joueur", ordre_passage[actif], affiche)
-            carte=int(input("Entrez l'indice de la carte que vous souhaitez jouer"))
+            au_tour=Label(fencarte, text="Au tour du joueur "+str(ordre_passage[actif]))
+            au_tour.grid(column=1, row=2)
+            colonne=1
+            for i in affiche:
+                if i.split()[-1]==i.split()[0]:
+                    i=Button(fencarte, text=i)
+                else :
+                    i=Button(fencarte, bg=str(dictionnaire_trad[str(i.split()[-1])]), text=i)
+                carte=i.config(command=lambda bt=i: ff(bt))
+                i.grid(column=colonne, row=3, sticky=E)
+                colonne+=1
+            carte=clefs_cartes(carte)# A reprendre
+           
+            """
             a=mains[ordre_passage[actif]]
             carte=a[carte]
+            """
             actif=Tour_jeux(actif, mains[ordre_passage[actif]], tas_jeu, nb_joueurs,carte)
         else :
             actif2=sens_jeu(mains[ordre_passage[actif]], tas_jeu, nb_joueurs, actif)
             actif=actif2
 
+    fencarte.mainloop()
 start()
