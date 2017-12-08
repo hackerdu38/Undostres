@@ -353,18 +353,20 @@ def ff(bt):
     carte=bt.cget("text")
 
     
-#def carte_sur_jeu():
-    
-    
-    
 
 def programme_principal():
     global nb_joueurs, nb_cartes, paquet, tas_jeu, actif, mains, ordre_passage,nomjou,salade, actif
+    
     dictionnaire_trad={"bleu":"cyan","rouge":"red","vert":"green","jaune":"yellow"}
-
+    paquet =[i for i in range (1,109)]
+    melange(paquet)
+    tas_jeu=[paquet[0]]
+    actif=0
+    init2()
     mains={}
     ordre_passage={}
     totalite_cartes={}
+    
     for i in range (108):
         totalite_cartes[i]=str(texte(i))
     clefs_cartes=list(totalite_cartes.keys())
@@ -375,23 +377,18 @@ def programme_principal():
     
     
     fennom.destroy()
-    init2()
+    
     print(texte(tas_jeu[-1]))
     fencarte=Tk()
     
-    paquet =[i for i in range (1,109)]
-    init()
-    melange(paquet)
-    tas_jeu=[paquet[0]]
-    actif=0
     test2=joue_ou_pioche(mains[ordre_passage[0]], tas_jeu)
 
     while actif != None:
         affiche=[texte(i) for i in mains[ordre_passage[actif]]]
         if couleur(tas_jeu[-1])==None:
-            Carte_tas_jeu=Button(fencarte, text=str(texte(tas_jeu[-1])))
+            Carte_tas_jeu=Button(fencarte, text=str(texte(tas_jeu[-1])), width=15, height=15)
         else:
-            Carte_tas_jeu=Button(fencarte, bg=str(dictionnaire_trad[str(couleur(tas_jeu[-1]))]), text=str(texte(tas_jeu[-1])))
+            Carte_tas_jeu=Button(fencarte, bg=str(dictionnaire_trad[str(couleur(tas_jeu[-1]))]), text=str(texte(tas_jeu[-1])), width=15, height=15)
         Carte_tas_jeu.grid(column=1, row=1)
         print("Carte dessus paquet : ",texte(tas_jeu[-1]))
         test2=joue_ou_pioche(mains[ordre_passage[actif]], tas_jeu)
@@ -403,13 +400,13 @@ def programme_principal():
             colonne=1
             for i in affiche:
                 if i.split()[-1]==i.split()[0]:
-                    i=Button(fencarte, text=i)
+                    i=Button(fencarte, text=i, width=15, height=15)
                 else :
-                    i=Button(fencarte, bg=str(dictionnaire_trad[str(i.split()[-1])]), text=i)
+                    i=Button(fencarte, bg=str(dictionnaire_trad[str(i.split()[-1])]), text=i, width=15, height=15)
                 carte=i.config(command=lambda bt=i: ff(bt))
                 i.grid(column=colonne, row=3, sticky=E)
                 colonne+=1
-            carte=clefs_cartes(carte)# A reprendre
+            #carte=clefs_cartes(carte)# A reprendre
            
             """
             a=mains[ordre_passage[actif]]
