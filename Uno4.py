@@ -351,11 +351,38 @@ def programme1():
 def ff(bt):
     global carte
     carte=bt.cget("text")
+    return carte
 
+def jeu_princ():
+    fencarte=Tk()
+    dictionnaire_trad={"bleu":"cyan","rouge":"red","vert":"green","jaune":"yellow"}
+    affiche=[texte(i) for i in mains[ordre_passage[actif]]]
+    if couleur(tas_jeu[-1])==None:
+            Carte_tas_jeu=Button(fencarte, text=str(texte(tas_jeu[-1])), width=15, height=15)
+    else:
+        Carte_tas_jeu=Button(fencarte, bg=str(dictionnaire_trad[str(couleur(tas_jeu[-1]))]), text=str(texte(tas_jeu[-1])), width=15, height=15)
+    Carte_tas_jeu.grid(column=1, row=1)
+    #print("Carte dessus paquet : ",texte(tas_jeu[-1]))
+    test2=joue_ou_pioche(mains[ordre_passage[actif]], tas_jeu)
+
+    if test2:
+        #print("Au tour du joueur", ordre_passage[actif], affiche)
+        au_tour=Label(fencarte, text="Au tour du joueur "+str(ordre_passage[actif]))
+        au_tour.grid(column=1, row=2)
+        colonne=1
+        for i in affiche:
+            if i.split()[-1]==i.split()[0]:
+                i=Button(fencarte, text=i, width=15, height=15)
+            else :
+                i=Button(fencarte, bg=str(dictionnaire_trad[str(i.split()[-1])]), text=i, width=15, height=15)
+            carte=i.config(command=lambda bt=i: ff(bt))
+            i.grid(column=colonne, row=3, sticky=E)
+            colonne+=1
+    return carte
     
 
 def programme_principal():
-    global nb_joueurs, nb_cartes, paquet, tas_jeu, actif, mains, ordre_passage,nomjou,salade, actif
+    global nb_joueurs, nb_cartes, paquet, tas_jeu, actif, mains, ordre_passage,nomjou,salade, actif, carte
     
     dictionnaire_trad={"bleu":"cyan","rouge":"red","vert":"green","jaune":"yellow"}
     paquet =[i for i in range (1,109)]
@@ -366,6 +393,7 @@ def programme_principal():
     mains={}
     ordre_passage={}
     totalite_cartes={}
+    fencarte=Tk()
     
     for i in range (108):
         totalite_cartes[i]=str(texte(i))
@@ -379,41 +407,20 @@ def programme_principal():
     fennom.destroy()
     
     print(texte(tas_jeu[-1]))
-    fencarte=Tk()
     
     test2=joue_ou_pioche(mains[ordre_passage[0]], tas_jeu)
 
     while actif != None:
         affiche=[texte(i) for i in mains[ordre_passage[actif]]]
-        if couleur(tas_jeu[-1])==None:
-            Carte_tas_jeu=Button(fencarte, text=str(texte(tas_jeu[-1])), width=15, height=15)
-        else:
-            Carte_tas_jeu=Button(fencarte, bg=str(dictionnaire_trad[str(couleur(tas_jeu[-1]))]), text=str(texte(tas_jeu[-1])), width=15, height=15)
-        Carte_tas_jeu.grid(column=1, row=1)
-        print("Carte dessus paquet : ",texte(tas_jeu[-1]))
-        test2=joue_ou_pioche(mains[ordre_passage[actif]], tas_jeu)
-
-        if test2:
-            print("Au tour du joueur", ordre_passage[actif], affiche)
-            au_tour=Label(fencarte, text="Au tour du joueur "+str(ordre_passage[actif]))
-            au_tour.grid(column=1, row=2)
-            colonne=1
-            for i in affiche:
-                if i.split()[-1]==i.split()[0]:
-                    i=Button(fencarte, text=i, width=15, height=15)
-                else :
-                    i=Button(fencarte, bg=str(dictionnaire_trad[str(i.split()[-1])]), text=i, width=15, height=15)
-                carte=i.config(command=lambda bt=i: ff(bt))
-                i.grid(column=colonne, row=3, sticky=E)
-                colonne+=1
-            #carte=clefs_cartes(carte)# A reprendre
+        jeu_princ()
+        for k in clefs_cartes:
+                if totalite_cartes[k]==carte:
+                    carte=k
+                    print(carte)
            
-            """
-            a=mains[ordre_passage[actif]]
-            carte=a[carte]
-            """
-            actif=Tour_jeux(actif, mains[ordre_passage[actif]], tas_jeu, nb_joueurs,carte)
-        else :
+           
+        actif=Tour_jeux(actif, mains[ordre_passage[actif]], tas_jeu, nb_joueurs,carte)
+        if not(test2) :
             actif2=sens_jeu(mains[ordre_passage[actif]], tas_jeu, nb_joueurs, actif)
             actif=actif2
 
