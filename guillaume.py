@@ -193,8 +193,7 @@ def joue_ou_pioche(main_joueur, tas_jeu):
     if text[0:2]=="+2":
         compteur_2=False
         for i in main_joueur:
-            text2=texte(i)
-            if text2[0:2]=="+2" or texte(i)=="+4":
+            if texte(i)[0:2]=="+2" or texte(i)=="+4":
                 compteur_2=True
         if compteur_2==False:
             compteur_pioche=plus4(tas_jeu)
@@ -214,8 +213,13 @@ def joue_ou_pioche(main_joueur, tas_jeu):
                 prenom=ordre_passage[(actif-1)%nb_joueurs]
             if sens == -1:
                 prenom=ordre_passage[(actif+1)%nb_joueurs]
-            print("Quelle couleur souhaitez-vous ", prenom, " ? ")
-            couleur4=input("")
+            Tu_as_cette_couleur=False
+            while not Tu_as_cette_couleur:
+                print("Quelle couleur souhaitez-vous ", prenom, " ? ")
+                couleur4=input("")
+                for w in range(len(mains[ordre_passage[actif]])):
+                    if mains[ordre_passage[actif]][w].split()[-1]==couleur4 or mains[ordre_passage[actif]][0]=="+4" or mains[ordre_passage[actif]][0]=="joker":
+                        Tu_as_cette_couleur=True               
             dico[tas_jeu[-1]]=couleur4
 
     else :
@@ -227,17 +231,20 @@ def joue_ou_pioche(main_joueur, tas_jeu):
         if k==len(main_joueur):
             affiche=[texte(i) for i in mains[ordre_passage[actif]]]
             print("Au tour du joueur", ordre_passage[actif], affiche)
+            """
             joueur_piocher = input("Vous ne pouvez pas jouer, voulez-vous piocher ? y/n")
             if joueur_piocher == "y":
-                piocher(paquet, main_joueur, 1)
-                affiche=[texte(i) for i in main_joueur]
-                print("Voici votre nouveau jeu : ", affiche)
-                verifie=regles_jeu(main_joueur[-1],tas_jeu)
-                if verifie==True:
-                    peut_jouer=True
-                else :
-                    peut_jouer=False
-                    print("False")
+            """
+            piocher(paquet, main_joueur, 1)
+            affiche=[texte(i) for i in main_joueur]
+            print("Voici votre nouveau jeu : ", affiche)
+            verifie=regles_jeu(main_joueur[-1],tas_jeu)
+            if verifie==True:
+                peut_jouer=True
+            else :
+                peut_jouer=False
+                print("False")
+            """
             else :
                 print("Vous êtes obligés de piocher")
                 piocher(paquet, main_joueur, 1)
@@ -248,6 +255,7 @@ def joue_ou_pioche(main_joueur, tas_jeu):
                     peut_jouer=True
                 else :
                     peut_jouer=False
+            """
 
     return peut_jouer
 
@@ -395,7 +403,8 @@ def initinit():
 def creer_cartes():
     global  nb_joueurs, nb_cartes, paquet, tas_jeu, actif, mains, ordre_passage,nomjou,salade, actif, totalite_cartes, carte, fencarte, affiche
     
-    
+    fencarte.destroy()
+    fencarte=Tk()
     if couleur(tas_jeu[-1])==None:
         Carte_tas_jeu=Button(fencarte, text=str(texte(tas_jeu[-1])), width=15, height=15)
     else:
@@ -422,6 +431,7 @@ def creer_cartes():
     else :
         actif2=sens_jeu(mains[ordre_passage[actif]], tas_jeu, nb_joueurs, actif)
         actif=actif2
+        creer_cartes()
     
 
 def programme_principal():
@@ -431,6 +441,8 @@ def programme_principal():
     for k in totalite_cartes:
         if totalite_cartes[k]==carte:
             carte=k
+            while not carte in mains[ordre_passage[actif]]:
+                carte+=1
             print(carte)
     actif=Tour_jeux(actif, mains[ordre_passage[actif]], tas_jeu, nb_joueurs,carte)
     
