@@ -143,32 +143,6 @@ def texte(indice):
         text= str(numero) + " " + couleur(indice)
     return text
 
-def pioche (paquet):
-    """
-    Permet de piocher une carte dans la pioche
-    """
-    carte_pioche=paquet.pop(randint(0,len(paquet)-1))
-    return carte_pioche
-
-
-def piocher(paquet, main_joueur, nombre_cartes):
-    """
-    Permet de piocher un nombre de cartes donné et de les mettre dans la main d'un joueur
-    """
-    if len(paquet) < nombre_cartes :
-        pioche_vide(paquet, pile_jeu)
-    for i in range (nombre_cartes):
-        main_joueur.append(pioche(paquet))
-
-def pioche_vide(pioche, pile_jeu):
-    """
-    Permet de refaire une pioche avec le tas du jeu si celle-ci est vide
-    """
-    for i in range (len(pile_jeu)-1):
-        a=pile_jeu.pop(0)
-        pioche.append(a)
-        melange(pioche)
-
 def regles_jeu(carte, tas_jeu):
     """
     Vérifie si les règles du jeu sont respectées
@@ -178,7 +152,50 @@ def regles_jeu(carte, tas_jeu):
     else :
         return False
 
-def plus4(tas_jeu):
+def pioche (paquet):
+    """
+    Permet de piocher une carte dans la pioche
+    """
+    carte_pioche=paquet.pop(randint(0,len(paquet)-1))
+    return carte_pioche
+
+
+def piocher(paquet, main_joueur, nombre_cartes=1):
+    global fencarte
+    """
+    Permet de piocher un nombre de cartes donné et de les mettre dans la main d'un joueur
+    """
+    if len(paquet) < 1 :
+        pioche_vide(paquet, pile_jeu)
+    for i in range(nombre_cartes):
+        main_joueur.append(carte_archive)
+        
+def piocher2():
+    global fencarte
+    """
+    Permet de piocher un nombre de cartes donné et de les mettre dans la main d'un joueur
+    """
+    if len(paquet) < 1 :
+        pioche_vide(paquet, pile_jeu)
+    carte_archive=pioche(paquet)
+    mains[ordre_passage[actif]].append(carte_archive)
+    if regles_jeu(carte_archive, tas_jeu):
+        a=Button(fencarte)
+        a.grid(row=3, column=9)
+            
+        
+def pioche_vide(pioche, pile_jeu):
+    """
+    Permet de refaire une pioche avec le tas du jeu si celle-ci est vide
+    """
+    for i in range (len(pile_jeu)-1):
+        a=pile_jeu.pop(0)
+        pioche.append(a)
+        melange(pioche)
+
+
+
+def nbpioche(tas_jeu):
     """
     Retourne le nombre de cartes que doit piocher le joueur
     """
@@ -200,7 +217,7 @@ def plus4(tas_jeu):
 
 
 def joue_ou_pioche(main_joueur, tas_jeu):
-    global paquet, couleur4, actif, compteurplus4,sens, verifprint
+    global paquet, couleur4, actif,sens, verifprint
     """
     Fait piocher le joueur en cas de besoin
     """
@@ -212,7 +229,7 @@ def joue_ou_pioche(main_joueur, tas_jeu):
             if texte(i)[0:2]=="+2" or texte(i)=="+4":
                 peut_repliquer=True #Si le joueur possède un +2 ou un +4 dans son jeu, il peut jouer
         if not peut_repliquer:
-            compteur_pioche=plus4(tas_jeu)#determine le nombre de cartes a piocher
+            compteur_pioche=nbpioche(tas_jeu)#determine le nombre de cartes a piocher
             piocher(paquet, main_joueur, compteur_pioche) #fait piocher la joueur
             peut_jouer=False
 
@@ -222,7 +239,7 @@ def joue_ou_pioche(main_joueur, tas_jeu):
             if texte(i)=="+4":
                 peut_repliquer=True
         if not peut_repliquer:
-            compteur_pioche=plus4(tas_jeu)
+            compteur_pioche=nbpioche(tas_jeu)
             piocher(paquet, main_joueur, compteur_pioche)
             peut_jouer=False
             if sens == 1:
@@ -237,20 +254,6 @@ def joue_ou_pioche(main_joueur, tas_jeu):
                     if texte([w]).split()[-1]==couleur4 or texte([w]).split()[0]=="+4" or texte([w]).split()[0]=="joker":
                         Tu_as_cette_couleur=True               
             dico[tas_jeu[-1]]=couleur4
-
-    else :
-        carte_fausse=0
-        for i in main_joueur :
-            verifie = regles_jeu(i, tas_jeu)
-            if verifie==False:
-                carte_fausse+=1
-        if carte_fausse==len(main_joueur): #Si le joueur ne peut jouer aucune des cartes
-            piocher(paquet, main_joueur, 1)
-            verifie=regles_jeu(main_joueur[-1],tas_jeu)
-            if verifie==True:
-                peut_jouer=True
-            else :
-                peut_jouer=False
 
     return peut_jouer
 
@@ -424,6 +427,8 @@ def creer_cartes():
             carte=i.config(command=lambda bt=i: ff(bt))
             i.grid(column=colonne, row=3, sticky=E)
             colonne+=1
+        bouton_pioche=Button(fencarte, text="Piocher", command=piocher2)
+        bouton_pioche.grid(row=3, column=8)
             
     else :
         actif2=sens_jeu(mains[ordre_passage[actif]], tas_jeu, nb_joueurs, actif)
