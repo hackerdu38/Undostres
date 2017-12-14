@@ -54,8 +54,8 @@ def init2():
     Crée le dictionnaire qui contient les couleurs en fonction de l'indice de la carte, initialise le sens et l'actif.
     """
     
-    global sens,dico, actif
-    
+    global sens,dico, actif,TestDejaPioche
+    TestDejaPioche=False
     actif=0
     
     dico={}
@@ -100,7 +100,6 @@ def num_carte(indice):
     chgt de sens =11
     passe tour = 12
     """
-    print(indice, "est l'indice")
     if 108 < indice or indice < 1:
         return "Erreur" #Permet de déceler une erreur car ces cartes n'existent pas
     k=1
@@ -218,21 +217,22 @@ def fenetre_couleur():
 
 
 def joue_ou_pioche(main_joueur, tas_jeu):
-    global paquet, couleur4, actif, compteurplus4,sens, verifprint
+    global paquet, couleur4, actif, compteurplus4,sens, verifprint, TestDejaPioche
     """
     Fait piocher le joueur en cas de besoin
     """
     peut_jouer=True #va être retourné, précise si le joueur peut encore jouer ou non
     compteur_2=True
     text=(texte(tas_jeu[-1]))
-    if text[0:2]=="+2":
+    if text[0:2]=="+2" and TestDejaPioche==False:
         compteur_2=False
         for i in main_joueur:
             if texte(i)[0:2]=="+2" or texte(i)=="+4":
                 compteur_2=True
         if compteur_2==False:
             compteur_pioche=plus4(tas_jeu) #determine le nombre de cartes a piocher
-            piocher(paquet, main_joueur, compteur_pioche)#fait piocher le joueur
+            piocher(paquet, main_joueur, compteur_pioche) #fait piocher le joueur
+            TestDejaPioche=True
             peut_jouer=False
 
     elif text =="+4":
@@ -270,6 +270,7 @@ def joue_ou_pioche(main_joueur, tas_jeu):
             affiche=[texte(i) for i in mains[ordre_passage[actif]]]
             print("Au tour du joueur", ordre_passage[actif], affiche)
             piocher(paquet, main_joueur, 1)
+            messagebox.showinfo("Pioche","Vous avez pioché")
             affiche=[texte(i) for i in main_joueur]
             print("Voici votre nouveau jeu : ", affiche)
             verifie=regles_jeu(main_joueur[-1],tas_jeu)
@@ -279,7 +280,7 @@ def joue_ou_pioche(main_joueur, tas_jeu):
                 peut_jouer=False
                 print("False")
     return peut_jouer
-
+    print("Le joueur", peut_jouer, "jouer")
 
 
 def carte_a_jouer(main_joueur, tas_jeu, carte):
@@ -308,6 +309,7 @@ def test_victoire(main_joueur):
     """
     if len(main_joueur)==0:
         print("VOUS AVEZ GAGNE !!!!!!!! \n Fin de la partie ")
+        fencarte.destroy()
         return True
     else :
         return False
@@ -323,12 +325,17 @@ def Tour_jeux(actif, main_joueur, tas_jeu, nb_joueurs,carte):
         print(main_joueur)
         carte2=main_joueur.pop(main_joueur.index(test))
         tas_jeu.append(carte2)
+        if texte(tas_jeu[-2]).split()[0]=="+2":
+            TestDejaPioche=False
+    else :
+        messagebox.showinfo("Eh non...", "Vous ne pouvez pas jouer")
     vict=test_victoire(main_joueur)
     if vict:
         return None
     else :
         actif=sens_jeu(main_joueur, tas_jeu, nb_joueurs, actif)
         return actif
+    print("l'actif est : ... ", actif)
 
 def okE(key):
     global joueurs
@@ -449,6 +456,7 @@ def creer_cartes():
         Carte_tas_jeu=Button(fencarte, bg=str(dictionnaire_trad[str(couleur(tas_jeu[-1]))]), text=str(texte(tas_jeu[-1])), width=15, height=15)
     Carte_tas_jeu.grid(column=1, row=1)
     print("Carte dessus paquet : ",texte(tas_jeu[-1]))
+    print("la main de ", ordre_passage[actif], "est ", mains[ordre_passage[actif]])
     test2=joue_ou_pioche(mains[ordre_passage[actif]], tas_jeu)
     if test2:
         print("Au tour du joueur", ordre_passage[actif], affiche)
@@ -478,9 +486,12 @@ def programme_principal():
     print("carte", carte)
 
     actif=Tour_jeux(actif, mains[ordre_passage[actif]], tas_jeu, nb_joueurs,carte)
+    if actif==None:
+        messagebox.showinfo("Victoire", "Vous avez gagné !")
     
-    creer_cartes()
-    fencarte.mainloop()
+    else :
+        creer_cartes()
+        fencarte.mainloop()
 
     
 start()
