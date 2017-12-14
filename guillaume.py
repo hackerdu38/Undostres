@@ -2,23 +2,31 @@
 from random import *
 from tkinter import *
 #from PIL import Image, ImageTk
+from tkinter import messagebox
 
 
 def start():
     global fenprinc
     fenprinc=Tk()
-    fenprinc.geometry("1350x766")
-    fenprinc.title("Undostres")
-    
-    #image = Image.open("uno.jpg") 
-    #photo = ImageTk.PhotoImage(image)  
-    #canvas = Canvas(fenprinc, width = image.size[0], height = image.size[1])  
-    #canvas.create_image(0,0, anchor = NW, image=photo) 
-    #canvas.pack()
+    fenprinc.geometry("1350x766")# redimension de la fenêtre
+    fenprinc.title("Undostres") #renommer la fenêtre
+    """
+    image = Image.open("uno.gif")
+    print("wesh")
+    photo = PhotoImage('Users\GE3MS\Desktop\Manon mon seul Amour\monuno.gif')
+    print("alors")
+    """
+    canvas = Canvas(fenprinc)
+    """
+    canvas.create_image(0,0, anchor = NW, image=photo)
+    print("pouloulou")
+    canvas.image=photo
+    print("yolo")
+    """
+    canvas.pack()
     Text= Button(fenprinc, text="Commencer la partie", bg="white",relief="raised", font=("Times", "20", "bold"),cursor="heart",command=fenetre_data)
     Text.pack()
     #Text_fenprinc= canvas.create_window(1100, 130, window=Text)
-    
     fenprinc.mainloop()
     
 def melange(paquet):
@@ -29,6 +37,9 @@ def melange(paquet):
 
 
 def init():
+    """
+    Creation mains de joueurs et de l'ordre de passage
+    """
     global mains, ordre_passage, nb_joueurs, nb_cartes
     
     main_jou=[]
@@ -39,6 +50,9 @@ def init():
     ordre_passage[salade]=nomjou
 
 def init2():
+    """
+    Crée le dictionnaire qui contient les couleurs en fonction de l'indice de la carte, initialise le sens et l'actif.
+    """
     global sens,dico, actif
     
     actif=0
@@ -66,9 +80,9 @@ def sens_jeu(main_joueur, tas_jeu, nb_joueurs, actif):
     numero_jou=1
     text3=texte(tas_jeu[-1])
     if text3[0:15]=="changement_sens":
-       sens=-sens
+       sens=-sens #change le sens si jamais la carte est un changement de sens
     elif text3[0:10]=="passe tour":
-        numero_jou=2
+        numero_jou=2 #fait passer 2 joueurs au lieu d'un lorsque la carte est un passe-tour
     actif = (actif+sens*numero_jou)%nb_joueurs-1
     return actif+1
 
@@ -86,7 +100,7 @@ def num_carte(indice):
     passe tour = 12
     """
     if 108 < indice or indice < 1:
-        return "Erreur"
+        return "Erreur" #Permet de déceler une erreur car ces cartes n'existent pas
     k=1
     for i in range (1,indice+1):
         if k==26 or k==51 or k==76 :
@@ -187,7 +201,7 @@ def joue_ou_pioche(main_joueur, tas_jeu):
     """
     Fait piocher le joueur en cas de besoin
     """
-    peut_jouer=True
+    peut_jouer=True #va être retourné, précise si le joueur peut encore jouer ou non
     compteur_2=True
     text=(texte(tas_jeu[-1]))
     if text[0:2]=="+2":
@@ -196,8 +210,8 @@ def joue_ou_pioche(main_joueur, tas_jeu):
             if texte(i)[0:2]=="+2" or texte(i)=="+4":
                 compteur_2=True
         if compteur_2==False:
-            compteur_pioche=plus4(tas_jeu)
-            piocher(paquet, main_joueur, compteur_pioche)
+            compteur_pioche=plus4(tas_jeu) #determine le nombre de cartes a piocher
+            piocher(paquet, main_joueur, compteur_pioche)#fait piocher le joueur
             peut_jouer=False
 
     elif text =="+4":
@@ -231,10 +245,6 @@ def joue_ou_pioche(main_joueur, tas_jeu):
         if k==len(main_joueur):
             affiche=[texte(i) for i in mains[ordre_passage[actif]]]
             print("Au tour du joueur", ordre_passage[actif], affiche)
-            """
-            joueur_piocher = input("Vous ne pouvez pas jouer, voulez-vous piocher ? y/n")
-            if joueur_piocher == "y":
-            """
             piocher(paquet, main_joueur, 1)
             affiche=[texte(i) for i in main_joueur]
             print("Voici votre nouveau jeu : ", affiche)
@@ -244,19 +254,6 @@ def joue_ou_pioche(main_joueur, tas_jeu):
             else :
                 peut_jouer=False
                 print("False")
-            """
-            else :
-                print("Vous êtes obligés de piocher")
-                piocher(paquet, main_joueur, 1)
-                affiche=[texte(i) for i in main_joueur]
-                print("Voici votre nouveau jeu : ", affiche)
-                verifie=regles_jeu(main_joueur[-1],tas_jeu)
-                if verifie==True:
-                    peut_jouer=True
-                else :
-                    peut_jouer=False
-            """
-
     return peut_jouer
 
 
@@ -272,7 +269,7 @@ def carte_a_jouer(main_joueur, tas_jeu, carte):
         ok2=regles_jeu(carte, tas_jeu)
         while ok2==False:
             print(ok2, carte)
-            carte=int(input("Choisissez une autre carte : "))
+            #carte=int(input("Choisissez une autre carte : "))
             a=mains[ordre_passage[actif]]
             carte=a[carte]
             ok2=regles_jeu(carte, tas_jeu)
@@ -334,7 +331,6 @@ def fenetre_data():
     entree.focus_set()
     fenjeu.bind("<Return>",okE)
 
-    print(nb_cartes,nb_joueurs)
 
 def fenetre_nom():
     global dico_noms,fennom
@@ -362,10 +358,16 @@ def programme1():
     fenetre_nom()
 
 def ff(bt):
-    global carte
+    global carte, totalite_cartes
     carte=bt.cget("text")
-    print("La arte est :",carte)
-    programme_principal()
+    for k in totalite_cartes:
+        if totalite_cartes[k]==carte:
+            carte=k
+            while not carte in mains[ordre_passage[actif]]:
+                carte+=1
+    if regles_jeu(carte,tas_jeu):
+        print("La arte est :",carte)
+        programme_principal()
 
 def initinit():
     global  nb_joueurs, nb_cartes, paquet, tas_jeu, actif, mains, ordre_passage,nomjou,salade, actif, totalite_cartes, carte, fencarte, dictionnaire_trad, affiche
@@ -390,6 +392,7 @@ def initinit():
     
     test2=joue_ou_pioche(mains[ordre_passage[0]], tas_jeu)
     fencarte=Tk()
+    fencarte.title("Fenetre espion")
     affiche=[texte(i) for i in mains[ordre_passage[actif]]]
     totalite_cartes={}
     dictionnaire_trad={"bleu":"cyan","rouge":"red","vert":"green","jaune":"yellow"}
@@ -403,7 +406,8 @@ def initinit():
 def creer_cartes():
     global  nb_joueurs, nb_cartes, paquet, tas_jeu, actif, mains, ordre_passage,nomjou,salade, actif, totalite_cartes, carte, fencarte, affiche
     
-    fencarte.destroy()
+    messagebox.showinfo("Changement", "Au tour du joueur : " + ordre_passage[actif]) #fenetre de changement de tour
+    fencarte.destroy() #Destruction de la fenêtre de jeu
     fencarte=Tk()
     if couleur(tas_jeu[-1])==None:
         Carte_tas_jeu=Button(fencarte, text=str(texte(tas_jeu[-1])), width=15, height=15)
@@ -438,12 +442,14 @@ def programme_principal():
     global nb_joueurs, nb_cartes, paquet, tas_jeu, actif, mains, ordre_passage,nomjou,salade, actif, carte
     
     print("carte", carte)
+    """
     for k in totalite_cartes:
         if totalite_cartes[k]==carte:
             carte=k
             while not carte in mains[ordre_passage[actif]]:
                 carte+=1
             print(carte)
+    """
     actif=Tour_jeux(actif, mains[ordre_passage[actif]], tas_jeu, nb_joueurs,carte)
     
     creer_cartes()
