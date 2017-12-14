@@ -207,7 +207,7 @@ def ok():
 
 def fenetre_couleur():
     global demandecoul,fencoul
-    fencoul=Tk()
+    fencoul=Toplevel()
     fencoul.title("Couleur")
     textecoul=Label(fencoul, text="Quelle couleur souhaitez-vous ?")
     textecoul.pack()
@@ -252,6 +252,12 @@ def joue_ou_pioche(main_joueur, tas_jeu):
                 if texte(w).split()[-1]==couleur4 or texte(w).split()[0]=="+4" or texte(w).split()[0]=="joker":
                     Tu_as_cette_couleur=True               
         dico[tas_jeu[-1]]=couleur4
+
+    elif text=="joker":
+        fenetre_couleur()
+        couleur5=couleur_carte_spe
+        dico[tas_jeu[-1]]=couleur5
+        creer_cartes()
 
 
     else :
@@ -386,7 +392,7 @@ def ff(bt):
                 carte+=1
     if regles_jeu(carte,tas_jeu):
         print("La arte est :",carte)
-        if texte(carte)=="+4":
+        if texte(carte)=="+4" or texte(carte)=="joker":
             fenetre_couleur()
         else:
             programme_principal()
@@ -395,9 +401,13 @@ def initinit():
     global  nb_joueurs, nb_cartes, paquet, tas_jeu, actif, mains, ordre_passage,nomjou,salade, actif, totalite_cartes, carte, fencarte, dictionnaire_trad, affiche
     paquet =[i for i in range (1,109)]
     melange(paquet)
-    tas_jeu=[paquet[0]]
-    
     init2()
+    carteDeBase=0
+    tas_jeu=[paquet[carteDeBase]]
+    while texte(paquet[0])=="+4" or texte(paquet[0])=="joker" or texte(paquet[0]).split()[-1]=="+2":
+        tas_jeu=[paquet[carteDeBase+1]]
+    
+    
     mains={}
     ordre_passage={}
     
@@ -433,6 +443,7 @@ def creer_cartes():
     fencarte=Tk()
     #raccourci=totalite_cartes[tas_jeu[-1]].split()
     if couleur(tas_jeu[-1])==None:
+        print("haha")
         Carte_tas_jeu=Button(fencarte, text=str(texte(tas_jeu[-1])), width=15, height=15)
     else:
         Carte_tas_jeu=Button(fencarte, bg=str(dictionnaire_trad[str(couleur(tas_jeu[-1]))]), text=str(texte(tas_jeu[-1])), width=15, height=15)
